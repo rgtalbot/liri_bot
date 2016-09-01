@@ -1,1 +1,1 @@
-# lirl_bot
+# liri_bot
