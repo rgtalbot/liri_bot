@@ -1,23 +1,35 @@
+//require inquirer
 var inquirer = require('inquirer');
+
+//require fs
 var fs = require('fs');
+
+//require twitter
 var Twitter = require('twitter');
+
+//require spotify
 var Spotify = require('spotify-web-api-node');
+
+//require request
 var request = require('request');
+
+//require keys.js
 var keys = require('./keys.js');
 
-var command = process.argv[2];
-
+//inquirer prompt to choose a command
 inquirer.prompt([
     {
         type: "list",
         message: "Choose Command",
         choices: ["my-tweets", "spotify-this-song", "movie-this", "do-what-it-says"],
         name: "choice"
-    },
+    }
 ]).then(function (prompt) {
     switchFunction(prompt.choice);
 });
 
+
+//function that runs a function depending on the command selected
 function switchFunction(expression) {
     switch (expression) {
         case "my-tweets":
@@ -37,7 +49,7 @@ function switchFunction(expression) {
     }
 }
 
-
+//twitter function that pulls your 20 most recent statuses
 function twitter() {
     var client = new Twitter({
         consumer_key: keys.twitterKeys.consumer_key,
@@ -64,8 +76,12 @@ function twitter() {
     })
 }
 
+
+//spotify function
 function spotify() {
 
+
+    //prompts the user to enter a song
     inquirer.prompt([
         {
             type: 'input',
@@ -73,6 +89,8 @@ function spotify() {
             name: "song",
             default: parameter
         }
+
+        //once the song is entered, pulls the spotify information
     ]).then(function (song) {
         var spotifyApi = new Spotify({
             clientID: keys.spotifyKeys.client_id,
@@ -94,7 +112,11 @@ function spotify() {
     });
 }
 
+
+//function that runs if they select movie-this
 function movie() {
+
+    //prompts the user to enter a movie title
     inquirer.prompt([
         {
             type: 'input',
@@ -105,6 +127,8 @@ function movie() {
     ]).then(function (movie) {
         console.log(movie.title);
 
+
+        //pulls information from OMDBApi and console.logs the information.
         var query_url = "http://www.omdbapi.com/?t=" + movie.title + "&y=&plot=long&tomatoes=true&r=json";
 
         request(query_url, function (error, data, body) {
@@ -126,19 +150,19 @@ function movie() {
     });
 }
 
-
+// variables for the default searches
 var prompt,
     parameter = "The Sign",
     movieT = "Mr. Nobody";
 
+
+//function that runs what the random.txt says to do.
 function itSays() {
     fs.readFile("random.txt", "utf8", function(error, random) {
        var randomTxt = random.split(',');
         prompt = randomTxt[0];
         parameter = randomTxt[1];
         movie = randomTxt[1];
-        console.log('prompt', prompt);
-        console.log('parameter', parameter);
         switchFunction(prompt);
     });
 }
