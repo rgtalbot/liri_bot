@@ -93,11 +93,9 @@ function spotify() {
         //once the song is entered, pulls the spotify information
     ]).then(function (song) {
         var spotifyApi = new Spotify({
-            clientID: keys.spotifyKeys.client_id,
-            clientSecret: keys.spotifyKeys.client_secret
         });
 
-        spotifyApi.searchTracks(song.song, {limit: 5}).then(function (data) {
+        spotifyApi.searchTracks(song.song, {limit: 1}).then(function (data) {
             var tracks = data.body.tracks.items;
             console.log("-------START-------");
             for (var i in tracks) {
